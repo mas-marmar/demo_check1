@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <h2>Здравствуйте, {{ user.fio }}</h2>
+    
+    <div class="slider-container">
+        {% for slide in slides %}
+            <div class="slider-slide">
+                <img src="{% static slide %}" alt="Слайд">
+            </div>
+        {% endfor %}
+        <button class="slider-btn prev">&#10094;</button>
+        <button class="slider-btn next">&#10095;</button>
+    </div>
+
+    <h3>Оформить заявку</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Подать заявку</button>
+    </form>
+
+    <h3 style="margin-top: 30px;">Мои заявки</h3>
+    {% for req in requests %}
+        <div class="request-card">
+            <p style="margin: 0 0 5px 0;"><b>Транспорт:</b> {{ req.get_transport_display }}</p>
+            <p style="margin: 0 0 5px 0;"><b>Старт:</b> {{ req.start_date|date:"d.m.Y" }}</p>
+            <p style="margin: 0 0 5px 0;"><b>Оплата:</b> {{ req.get_payment_method_display }}</p>
+            <p style="margin: 0;"><b>Статус:</b> <span class="status-{{ req.status }}">{{ req.get_status_display }}</span></p>
+            
+            {% if req.status == 2 %}
+                {% if not req.review %}
+                    <a href="{% url 'add_review' req.id %}" class="btn btn-green" style="margin-top: 10px; font-size: 14px; padding: 8px;">Оставить отзыв</a>
+                {% else %}
+                    <p class="text-muted" style="margin-top: 10px;">Отзыв оставлен: {{ req.review.text }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="text-muted">У вас пока нет заявок.</p>
+    {% endfor %}
+    
+    <a href="{% url 'logout' %}" class="btn" style="background-color: #6C757D; margin-top: 20px;">Выйти</a>
+{% endblock %}
