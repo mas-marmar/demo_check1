@@ -40,5 +40,10 @@
         <p class="text-muted">У вас пока нет заявок.</p>
     {% endfor %}
     
-    <a href="{% url 'logout' %}" class="btn" style="background-color: #6C757D; margin-top: 20px;">Выйти</a>
+<form action="{% url 'logout' %}" method="post" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn" style="background-color: #6C757D; border: none; cursor: pointer;">
+        Выйти
+    </button>
+</form>
 {% endblock %}
